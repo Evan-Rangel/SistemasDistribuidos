@@ -5,14 +5,6 @@ using UnityEngine.Networking;
 
 public class CreateUser : MonoBehaviour
 {
-    public class  Date
-    {
-        [SerializeField, Range(1980, 2023)] int year;
-        [SerializeField, Range(1, 12)] int month;
-        [SerializeField, Range(1, 31)] int day;
-    }
-
-    //[SerializeField] Date date;
     [SerializeField] string nombre, apellidos, correo, password, nickname, date;
     [SerializeField] int tel;
 
