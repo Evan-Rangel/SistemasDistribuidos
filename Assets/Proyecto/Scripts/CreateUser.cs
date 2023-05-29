@@ -22,7 +22,6 @@ public class CreateUser : MonoBehaviour
         form.AddField("password",_password);
         form.AddField("nickname",_nickname);
 
-
         using (UnityWebRequest www = UnityWebRequest.Post(_URL, form))
         {
             yield return www.SendWebRequest();
@@ -33,7 +32,7 @@ public class CreateUser : MonoBehaviour
             }
             else
             {
-                Debug.Log("Form upload complete!");
+                Debug.Log("Form upload complete! "+ www.downloadHandler);
             }
         }
     }
@@ -62,7 +61,6 @@ public class CreateUser : MonoBehaviour
                     break;
             }
         }
-
     }
 
     private void Update()
@@ -72,7 +70,6 @@ public class CreateUser : MonoBehaviour
             Debug.Log("Entro");
 
             StartCoroutine(CrearUsuario(date, nombre, apellidos, correo, password, nickname, tel));
-            //StartCoroutine(GetRequest(_URL));
         
         }
     }
