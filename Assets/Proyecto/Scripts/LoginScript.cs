@@ -7,7 +7,7 @@ public class LoginScript : MonoBehaviour
 {
     [SerializeField] string mail, password;
     [SerializeField, TextArea()]string text;
-
+    [SerializeField] ShowCharacters showCharacters;
     string _URL = "http://localhost/LastFantasy/loginC.php";
 
     IEnumerator GetUser(string _mail, string _password)
@@ -16,8 +16,6 @@ public class LoginScript : MonoBehaviour
 
         form.AddField("correo", _mail);
         form.AddField("password", _password);
-
-
 
         using (UnityWebRequest www = UnityWebRequest.Post(_URL, form))
         {
@@ -29,30 +27,11 @@ public class LoginScript : MonoBehaviour
             }
             else
             {
-                /*
-                using (UnityWebRequest webRequest = UnityWebRequest.Get(_URL))
-                {
-                    yield return webRequest.SendWebRequest();
-                    string[] pages = _URL.Split('/');
-                    int page = pages.Length - 1;
-
-                    switch (webRequest.result)
-                    {
-                        case UnityWebRequest.Result.ConnectionError:
-                        case UnityWebRequest.Result.DataProcessingError:
-                            Debug.LogError(pages[page] + ": Error: " + webRequest.error);
-                            break;
-                        case UnityWebRequest.Result.ProtocolError:
-                            Debug.LogError(pages[page] + ": HTTP Error: " + webRequest.error);
-                            break;
-                        case UnityWebRequest.Result.Success:
-                            text = webRequest.downloadHandler.text;
-                            Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
-                            break;
-                    }
-                }
-                */
                 text = www.downloadHandler.text;
+                if (text=="null")
+                {
+                    Debug.Log("a");
+                }
                 Debug.Log("Form upload complete! " + www.downloadHandler.text);
             }
         }
@@ -62,7 +41,6 @@ public class LoginScript : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.C))
         {
-            //Debug.Log("Entro");
 
             StartCoroutine(GetUser(mail, password));
 

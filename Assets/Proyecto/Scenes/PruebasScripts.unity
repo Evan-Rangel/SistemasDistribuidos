@@ -153,8 +153,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mail: catosix720@gmail.com
-  password: algo
+  password: a
   text: 
+  showCharacters: {fileID: 0}
 --- !u!4 &285980842
 Transform:
   m_ObjectHideFlags: 0
