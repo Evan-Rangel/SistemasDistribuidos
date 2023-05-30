@@ -1499,8 +1499,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 848537791}
-        m_TargetAssemblyTypeName: ControlInicioRegistrarseMenus, Assembly-CSharp
-        m_MethodName: IniciarCrearPersonaje
+        m_TargetAssemblyTypeName: LoginScript, Assembly-CSharp
+        m_MethodName: LogIn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3855,9 +3855,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 848537787}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d25382538908b1e4aa4a4d7c164470c8, type: 3}
+  m_Script: {fileID: 11500000, guid: 299bc193637fa1b4abf89fd2d13a65fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mail: 
+  password: 
+  text: 
+  showCharacters: {fileID: 0}
+  mailText: {fileID: 1342418613}
+  passwordText: {fileID: 524487761}
 --- !u!1 &854295084
 GameObject:
   m_ObjectHideFlags: 0
@@ -4165,7 +4171,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 868932305}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d3ae2a953cde58e4a85d7cbb1c743974, type: 3}
   m_Name: 

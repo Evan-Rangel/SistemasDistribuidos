@@ -2,12 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 public class LoginScript : MonoBehaviour
 {
     [SerializeField] string mail, password;
-    [SerializeField, TextArea()]string text;
+    [SerializeField] string text;
     [SerializeField] ShowCharacters showCharacters;
+    [SerializeField] Text mailText;
+    [SerializeField] Text passwordText;
+
     string _URL = "http://localhost/LastFantasy/loginC.php";
 
     IEnumerator GetUser(string _mail, string _password)
@@ -37,13 +41,8 @@ public class LoginScript : MonoBehaviour
         }
     }
 
-    private void Update()
+    public void LogIn()
     {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-
-            StartCoroutine(GetUser(mail, password));
-
-        }
+        StartCoroutine(GetUser(mailText.text, passwordText.text));
     }
 }
