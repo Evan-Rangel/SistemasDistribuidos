@@ -11,8 +11,9 @@ public class LoginScript : MonoBehaviour
     [SerializeField] ShowCharacters showCharacters;
     [SerializeField] Text mailText;
     [SerializeField] Text passwordText;
-
     string _URL = "http://localhost/LastFantasy/loginC.php";
+
+    public string GetText { get { return text; } } 
 
     IEnumerator GetUser(string _mail, string _password)
     {
@@ -31,12 +32,16 @@ public class LoginScript : MonoBehaviour
             }
             else
             {
-                text = www.downloadHandler.text;
-                if (text=="null")
+                if (text!="null")
                 {
-                    Debug.Log("a");
+                    text = www.downloadHandler.text;
+                    showCharacters.GetChartactersFunc(text);
                 }
-                Debug.Log("Form upload complete! " + www.downloadHandler.text);
+                else
+                {
+                    Debug.Log("error");
+                }
+                //Debug.Log("Form upload complete! " + www.downloadHandler.text);
             }
         }
     }
@@ -45,4 +50,5 @@ public class LoginScript : MonoBehaviour
     {
         StartCoroutine(GetUser(mailText.text, passwordText.text));
     }
+
 }

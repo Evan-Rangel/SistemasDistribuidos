@@ -5,23 +5,50 @@ using UnityEngine.Networking;
 
 public class ShowCharacters : MonoBehaviour
 {
+    [System.Serializable]
+    public class Character
+    {
+        public string name;
+        public string description;
+
+        public List<char> charName;
+        public List<char> charDescription;
+        public Character()
+        {
+            charName = new List<char>();
+            charDescription = new List<char>();
+
+        }
+
+        public void SetProps()
+        {
+            name = new string(charName.ToArray());
+            description = new string(charDescription.ToArray());
+            charName.Clear();
+            charDescription.Clear();
+        }
+    }
+
     [SerializeField] string txt;
 
-    [SerializeField] string[] charactersName;
-    [SerializeField] string[] charactersDescription;
-
+    [SerializeField] List<Character> characters;
     [SerializeField] string newCharacterName;
     [SerializeField] string newCharacterDescription;
 
 
     string _URL = "http://localhost/LastFantasy/getCharacters.php";
     string _URLC = "http://localhost/LastFantasy/createCharacter.php";
-    IEnumerator GetCharacters()
+
+    
+    IEnumerator GetCharacters(string _id_user)
     {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(_URL))
+        WWWForm form = new WWWForm();
+
+        form.AddField("id_usuario", _id_user);
+
+        using (UnityWebRequest webRequest = UnityWebRequest.Post(_URL, form))
         {
             yield return webRequest.SendWebRequest();
-
 
             string[] pages = _URL.Split('/');
             int page = pages.Length - 1;
@@ -36,11 +63,56 @@ public class ShowCharacters : MonoBehaviour
                     Debug.LogError(pages[page] + ": HTTP Error: " + webRequest.error);
                     break;
                 case UnityWebRequest.Result.Success:
+                    txt = webRequest.downloadHandler.text;
+                    SplitCharacters(txt);
                     Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
                     break;
             }
         }
     }
+    private void Start()
+    {
+        characters = new List<Character>();
+    }
+
+    void SplitCharacters(string _text)
+    {
+        bool description=false;
+        bool newCharacter = true;
+        int charactersIndex = 0;
+        for (int i = 0; i < _text.Length; i++)
+        {
+            if (newCharacter)
+            {
+                characters.Add(new Character());
+                newCharacter = false;
+            }
+
+            if (_text[i] != '-' && _text[i] != '_')
+            {
+                if (!description)
+                {
+                    characters[charactersIndex].charName.Add(_text[i]);
+                }
+                else
+                {
+                    characters[charactersIndex].charDescription.Add(_text[i]);
+                }
+            }
+            if (_text[i] == '-')
+            {
+                description = true;
+            }
+            if (_text[i] == '_')
+            {
+                characters[charactersIndex].SetProps();
+                newCharacter = true;
+                charactersIndex++;
+                description = false;
+            }
+        }
+    }
+
 
     IEnumerator CreateCharacter()
     {
@@ -62,9 +134,9 @@ public class ShowCharacters : MonoBehaviour
             }
         }
     }
-    public void GetChartactersFunc()
+    public void GetChartactersFunc(string _id_user)
     {
-        StartCoroutine(GetCharacters());
+        StartCoroutine(GetCharacters(_id_user));
     }
     public void CreateCharacterFunc()
     {
