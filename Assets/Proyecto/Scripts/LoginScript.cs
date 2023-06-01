@@ -32,10 +32,11 @@ public class LoginScript : MonoBehaviour
             }
             else
             {
+                text = www.downloadHandler.text;
                 if (text!="null")
                 {
-                    text = www.downloadHandler.text;
-                    showCharacters.GetChartactersFunc(text);
+                    SceneManager.LoadScene("CraerIniciar Peronaje");
+                    //showCharacters.GetChartactersFunc(text);
                 }
                 else
                 {
