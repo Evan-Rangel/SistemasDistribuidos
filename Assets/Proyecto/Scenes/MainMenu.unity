@@ -3953,6 +3953,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 983282208}
+        m_TargetAssemblyTypeName: RegisterScript, Assembly-CSharp
+        m_MethodName: RegisterUser
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &854295087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4470,6 +4482,7 @@ GameObject:
   - component: {fileID: 983282207}
   - component: {fileID: 983282206}
   - component: {fileID: 983282205}
+  - component: {fileID: 983282208}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -4526,6 +4539,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &983282208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 983282204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c013b8214fd79854c87a1b233203180c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nombre: {fileID: 1252488368}
+  correo: {fileID: 23007737}
+  password: {fileID: 70201497}
+  confirmPassword: {fileID: 88628759}
+  edad: {fileID: 572593022}
+  pais: {fileID: 722400909}
+  telefono: {fileID: 958244484}
+  nickname: {fileID: 516653035}
+  info: 
+  charNicknames: 
+  nicknames: []
 --- !u!1 &1017760996
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,23 +5,25 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 public class RegisterScript : MonoBehaviour
 {
-    [SerializeField] Text nombre, coreo, password,confirmPassword, edad, pais, telefono, nickname;
+    [SerializeField] Text nombre, correo, password,confirmPassword, edad, pais, telefono, nickname;
 
     string _URL= "http://localhost/LastFantasy/registeruser.php";
-    string _compareD_URL= "http://localhost/LastFantasy/getuserdata.php";
+    string _compareD_URL = "http://localhost/LastFantasy/getuserdata.php";
+    string _duplicado_URL = "http://localhost/LastFantasy/checkduplicateddata.php";
     [SerializeField]string info;
-
+    [SerializeField] List<char> charNicknames;
+    [SerializeField] List<string> nicknames;
     IEnumerator CrearUsuario()
     {
         WWWForm form = new WWWForm();
 
         form.AddField("nombre", nombre.text);
-        form.AddField("correo", coreo.text);
+        form.AddField("correo", correo.text);
         form.AddField("edad", edad.text);
         form.AddField("telefono", telefono.text);
         form.AddField("password", password.text);
         form.AddField("nickname", nickname.text);
-        form.AddField("pais", password.text);
+        form.AddField("pais", pais.text);
 
         using (UnityWebRequest www = UnityWebRequest.Post(_URL, form))
         {
@@ -34,6 +36,24 @@ public class RegisterScript : MonoBehaviour
             else
             {
                 Debug.Log("Form upload complete! " + www.downloadHandler);
+                StartCoroutine(DeleteDuplicatedData());
+            }
+        }
+    }
+    IEnumerator DeleteDuplicatedData()
+    {
+
+        using (UnityWebRequest www = UnityWebRequest.Get(_duplicado_URL))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                Debug.Log("Data duplicada borrada");
             }
         }
     }
@@ -59,34 +79,30 @@ public class RegisterScript : MonoBehaviour
                 case UnityWebRequest.Result.Success:
                     info = webRequest.downloadHandler.text;
 
-                    CompareNicknames();
-                    Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
+                    CompareNicknames(info);
                     break;
             }
         }
     }
 
-    void CompareNicknames()
+    void CompareNicknames(string _info)
     {
-        List<string> nicknames = new List<string>();
-        List<char> charNicknames = new List<char>();
+        nicknames = new List<string>();
+        charNicknames = new List<char>();
         int indexNicknames = 0;
-        
-        for (int i = 0; i < info.Length; i++)
+
+        for (int i = 0; i < _info.Length; i++)
         {
-            if (info[i]=='_')
+            if (_info[i]=='_')
             {
                 nicknames.Add("");
-                if (nicknames.Count>1)
-                {
-                    nicknames[indexNicknames] = new string(charNicknames.ToArray());
-                    charNicknames.Clear();
-                    indexNicknames++;
-                }
+                nicknames[indexNicknames] = new string(charNicknames.ToArray());
+                charNicknames.Clear();
+                indexNicknames++;
             }
             else
             {
-                charNicknames.Add(info[i]);
+                charNicknames.Add(_info[i]);
             }
         }
 
@@ -98,20 +114,26 @@ public class RegisterScript : MonoBehaviour
                 return;
             }
         }
-
         StartCoroutine(CrearUsuario());
 
     }
 
     public void RegisterUser()
     {
-        if (password.text== confirmPassword.text)
+        if (password.text=="" || confirmPassword.text== "" || nombre.text== "" || correo.text== "" || telefono.text== "" || edad.text== "" || pais.text== "" || nickname.text== "")
         {
-            StartCoroutine(CompareDataBase());
+            Debug.Log("Algo es Null");
         }
         else
         {
-            Debug.Log("Contrasenias no coinciden");
+            if (password.text== confirmPassword.text)
+            {
+                StartCoroutine(CompareDataBase());
+            }
+            else
+            {
+                Debug.Log("Contrasenias no coinciden");
+            }
         }
     }
 
