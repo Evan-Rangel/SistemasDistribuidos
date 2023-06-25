@@ -13,6 +13,7 @@ public class RegisterScript : MonoBehaviour
     [SerializeField]string info;
     [SerializeField] List<char> charNicknames;
     [SerializeField] List<string> nicknames;
+    [SerializeField] string prueba;
     IEnumerator CrearUsuario()
     {
         WWWForm form = new WWWForm();
@@ -42,7 +43,7 @@ public class RegisterScript : MonoBehaviour
     }
     IEnumerator DeleteDuplicatedData()
     {
-
+        yield return new WaitForEndOfFrame();
         using (UnityWebRequest www = UnityWebRequest.Get(_duplicado_URL))
         {
             yield return www.SendWebRequest();
@@ -53,6 +54,7 @@ public class RegisterScript : MonoBehaviour
             }
             else
             {
+                prueba = www.downloadHandler.text;
                 Debug.Log("Data duplicada borrada");
             }
         }

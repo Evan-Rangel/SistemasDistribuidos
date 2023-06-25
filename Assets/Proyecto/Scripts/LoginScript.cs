@@ -8,7 +8,6 @@ public class LoginScript : MonoBehaviour
 {
     [SerializeField] string mail, password;
     [SerializeField] string text;
-    [SerializeField] ShowCharacters showCharacters;
     [SerializeField] Text mailText;
     [SerializeField] Text passwordText;
     string _URL = "http://localhost/LastFantasy/loginC.php";
@@ -21,7 +20,6 @@ public class LoginScript : MonoBehaviour
 
         form.AddField("correo", _mail);
         form.AddField("password", _password);
-
         using (UnityWebRequest www = UnityWebRequest.Post(_URL, form))
         {
             yield return www.SendWebRequest();
@@ -35,14 +33,14 @@ public class LoginScript : MonoBehaviour
                 text = www.downloadHandler.text;
                 if (text!="null")
                 {
+                    int id = int.Parse(text);
+                    PlayerPrefs.SetString("id_usuario", id.ToString());
                     SceneManager.LoadScene("CraerIniciar Peronaje");
-                    //showCharacters.GetChartactersFunc(text);
                 }
                 else
                 {
                     Debug.Log("error");
                 }
-                //Debug.Log("Form upload complete! " + www.downloadHandler.text);
             }
         }
     }
