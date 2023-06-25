@@ -33,8 +33,8 @@ public class LoginScript : MonoBehaviour
                 text = www.downloadHandler.text;
                 if (text!="null")
                 {
-                    int id = int.Parse(text);
-                    PlayerPrefs.SetString("id_usuario", id.ToString());
+                    //int id = int.Parse(text);
+                    PlayerPrefs.SetString("id_usuario", text);
                     SceneManager.LoadScene("CraerIniciar Peronaje");
                 }
                 else

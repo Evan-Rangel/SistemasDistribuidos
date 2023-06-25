@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ShowCharacters : MonoBehaviour
 {
     [System.Serializable]
-    
+
     public class Character
     {
         public string name;
@@ -28,6 +28,7 @@ public class ShowCharacters : MonoBehaviour
             charName.RemoveAt(0);
 
             name = new string(charName.ToArray());
+            Debug.Log(name);
             //description = new string(charDescription.ToArray());
             charName.Clear();
             //charDescription.Clear();
@@ -40,11 +41,12 @@ public class ShowCharacters : MonoBehaviour
         public Image charImageHolde;
         public Text charNameHolder;
         public Text charDescriptionHolder;
+        public Image backgroundImage;
 
-        public void SetHolders(string _name, string _description)
+        public void SetHolders(string _name, Sprite _typeOfCharImage)
         {
             charNameHolder.text = _name;
-            charDescriptionHolder.text = _description;
+            backgroundImage.sprite = _typeOfCharImage;
         }
     }
     [SerializeField] string txt;
@@ -53,6 +55,7 @@ public class ShowCharacters : MonoBehaviour
     [SerializeField] string newCharacterName;
     [SerializeField] string newCharacterDescription;
     [SerializeField] List<CharacterHolder> charHolder;
+    [SerializeField] Sprite[] typeOfCharImages;
 
 
     string _URL = "http://localhost/LastFantasy/getCharacters.php";
@@ -95,6 +98,7 @@ public class ShowCharacters : MonoBehaviour
     private void Start()
     {
         characters = new List<Character>();
+        //charHolder = new List<CharacterHolder>();
         GetChartactersFunc(PlayerPrefs.GetString("id_usuario"));
     }
 
@@ -106,9 +110,12 @@ public class ShowCharacters : MonoBehaviour
 
         foreach (char _letter in _text)
         {
+           // Debug.Log(_letter);
+
             if (newCharacter)
             {
                 characters.Add(new Character());
+                charHolder.Add(new CharacterHolder());
                 charactersIndex = characters.Count -1;
                 newCharacter = false;
             }
@@ -119,21 +126,25 @@ public class ShowCharacters : MonoBehaviour
                     typechar = true;
                     break;
                 case '_':
+
                     typechar = false;
                     newCharacter = true;
                     characters[charactersIndex].SetProps();
-
+                    Debug.Log(characters[charactersIndex].typeChar);
+                    charHolder[0].SetHolders(characters[charactersIndex].name, typeOfCharImages[characters[charactersIndex].typeChar]);
+                    
                     break;
                 default:
                     if (typechar)
                     {
-                        characters[charactersIndex].charName.Add(_letter);
 
+                        characters[charactersIndex].typeChar = int.Parse(_letter.ToString()) ;
                     }
                     else
                     {
-                        characters[charactersIndex].typeChar=_letter;
+                         Debug.Log(_letter);
 
+                        characters[charactersIndex].charName.Add(_letter);
                     }
                     break;
             }
