@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using TMPro;
 public class ShowCharacters : MonoBehaviour
 {
     [System.Serializable]
@@ -22,11 +23,13 @@ public class ShowCharacters : MonoBehaviour
 
         }
 
-        public void SetProps()
+        public void SetProps(bool _first)
         {
-            charName.RemoveAt(0);
-            charName.RemoveAt(0);
-
+            if (_first)
+            {
+                charName.RemoveAt(0);
+                charName.RemoveAt(0);
+            }
             name = new string(charName.ToArray());
             Debug.Log(name);
             //description = new string(charDescription.ToArray());
@@ -39,7 +42,7 @@ public class ShowCharacters : MonoBehaviour
     public class CharacterHolder
     {
         public Image charImageHolde;
-        public Text charNameHolder;
+        public TMP_Text charNameHolder;
         public Text charDescriptionHolder;
         public Image backgroundImage;
 
@@ -56,8 +59,10 @@ public class ShowCharacters : MonoBehaviour
     [SerializeField] string newCharacterDescription;
     [SerializeField] List<CharacterHolder> charHolder;
     [SerializeField] Sprite[] typeOfCharImages;
+    [SerializeField] Animator book;
+    [SerializeField] TMP_Text nameText;
 
-
+    int charIndex =0;
     string _URL = "http://localhost/LastFantasy/getCharacters.php";
     string _URLC = "http://localhost/LastFantasy/createCharacter.php";
 
@@ -107,6 +112,7 @@ public class ShowCharacters : MonoBehaviour
         bool newCharacter = true;
         bool typechar=false;
         int charactersIndex=0;
+        bool first=true;
 
         foreach (char _letter in _text)
         {
@@ -115,7 +121,7 @@ public class ShowCharacters : MonoBehaviour
             if (newCharacter)
             {
                 characters.Add(new Character());
-                charHolder.Add(new CharacterHolder());
+                //charHolder.Add(new CharacterHolder());
                 charactersIndex = characters.Count -1;
                 newCharacter = false;
             }
@@ -129,9 +135,11 @@ public class ShowCharacters : MonoBehaviour
 
                     typechar = false;
                     newCharacter = true;
-                    characters[charactersIndex].SetProps();
+                    characters[charactersIndex].SetProps(first);
+                    first = false;
                     Debug.Log(characters[charactersIndex].typeChar);
-                    charHolder[0].SetHolders(characters[charactersIndex].name, typeOfCharImages[characters[charactersIndex].typeChar]);
+                    //book.SetInteger("Page", characters[charactersIndex].typeChar);
+                    //charHolder[0].SetHolders(characters[charactersIndex].name, typeOfCharImages[characters[charactersIndex].typeChar]);
                     
                     break;
                 default:
@@ -203,7 +211,24 @@ public class ShowCharacters : MonoBehaviour
         }
         */
     }
+    public void NextPage()
+    {
+        if (charIndex<characters.Count)
+        {
+            book.SetInteger("Page", characters[charIndex].typeChar+1);
+            nameText.text = characters[charIndex].name;
+            charIndex++;
+        }
+    }
+    public void SelectCharacter()
+    {
+        book.SetInteger("Page", 0);
 
+    }
+    IEnumerator SetText()
+    {
+        yield return new WaitForSeconds( book.GetCurrentAnimatorStateInfo(0).length);
+    }
 
     IEnumerator CreateCharacter()
     {
