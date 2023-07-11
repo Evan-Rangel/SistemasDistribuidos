@@ -31,7 +31,7 @@ public class ShowCharacters : MonoBehaviour
                 charName.RemoveAt(0);
             }
             name = new string(charName.ToArray());
-            Debug.Log(name);
+           // Debug.Log(name);
             //description = new string(charDescription.ToArray());
             charName.Clear();
             //charDescription.Clear();
@@ -56,13 +56,24 @@ public class ShowCharacters : MonoBehaviour
 
     [SerializeField] List<Character> characters;
     [SerializeField] string newCharacterName;
-    [SerializeField] string newCharacterDescription;
+    [SerializeField] string newCharacterType;
     [SerializeField] List<CharacterHolder> charHolder;
     [SerializeField] Sprite[] typeOfCharImages;
     [SerializeField] Animator book;
     [SerializeField] TMP_Text nameText;
+    [SerializeField] TMP_InputField nameInput;
+    [SerializeField] GameObject buttonConfirm;
+    [SerializeField] TMP_Text setNameText;
+    [SerializeField] GameObject nextButton;
+    [SerializeField] GameObject prevButton;
+    [SerializeField] GameObject useButton;
 
-    int charIndex =0;
+
+
+    int createCharIndex ;
+    bool createChar = false;
+
+    int charIndex =-1;
     string _URL = "http://localhost/LastFantasy/getCharacters.php";
     string _URLC = "http://localhost/LastFantasy/createCharacter.php";
 
@@ -116,8 +127,6 @@ public class ShowCharacters : MonoBehaviour
 
         foreach (char _letter in _text)
         {
-           // Debug.Log(_letter);
-
             if (newCharacter)
             {
                 characters.Add(new Character());
@@ -137,9 +146,6 @@ public class ShowCharacters : MonoBehaviour
                     newCharacter = true;
                     characters[charactersIndex].SetProps(first);
                     first = false;
-                    Debug.Log(characters[charactersIndex].typeChar);
-                    //book.SetInteger("Page", characters[charactersIndex].typeChar);
-                    //charHolder[0].SetHolders(characters[charactersIndex].name, typeOfCharImages[characters[charactersIndex].typeChar]);
                     
                     break;
                 default:
@@ -150,79 +156,82 @@ public class ShowCharacters : MonoBehaviour
                     }
                     else
                     {
-                         Debug.Log(_letter);
-
                         characters[charactersIndex].charName.Add(_letter);
                     }
                     break;
             }
         }
-        /*
-        bool description=false;
-        bool id_image = false;
-        int charactersIndex = 0;
-        
-        
-        
-        foreach (char _letter in _text)
-        {
-            if (newCharacter)
-            {
-                characters.Add(new Character());
-                newCharacter = false;
-            }
-            
-            switch (_letter)
-            {
-                case '-':
-                    description = true;
-                    id_image = false;
-                    break;
-                case '_':
-                    id_image = true;
-                    description = false;
-                    break;
-                case '=':
-                    characters[charactersIndex].SetProps();
-                    charHolder[0].SetHolders(characters[charactersIndex].name, characters[charactersIndex].description);
-                    newCharacter = true;
-                    charactersIndex++;
-                    description = false;
-                    id_image = false;
-                    break;
-
-                default:
-                    if (!description && !id_image)
-                    {
-                        characters[charactersIndex].charName.Add(_letter);
-                    }
-                    if (description && !id_image)
-                    {
-                        characters[charactersIndex].charDescription.Add(_letter);
-                    }
-                    if (!description && id_image)
-                    {
-                        characters[charactersIndex].id_Image = _letter;
-
-                    }
-                    break;
-                
-            }
-        }
-        */
     }
     public void NextPage()
     {
-        if (charIndex<characters.Count)
+        book.SetBool("IsRight", true);
+        if (createChar)
         {
-            book.SetInteger("Page", characters[charIndex].typeChar+1);
-            nameText.text = characters[charIndex].name;
-            charIndex++;
+            if (createCharIndex<4)
+            {
+                createCharIndex++;
+                Debug.Log(createCharIndex);
+                book.SetInteger("Paginas", createCharIndex);
+            }
         }
+        else
+        {
+            if (charIndex<characters.Count)
+            {
+                useButton.SetActive(false);
+                StartCoroutine(ActiveInputToSelectCharacter());
+
+                charIndex++;
+                book.SetInteger("Paginas", characters[charIndex].typeChar+1);
+                nameText.text = characters[charIndex].name;
+            }
+        }
+        StartCoroutine(DisableAnimations());
+
+    }
+    public void PreviewPage()
+    {
+        book.SetBool("IsRight", false);
+        if (createChar)
+        {
+            if (createCharIndex > 0)
+            {
+                createCharIndex--;
+                Debug.Log(createCharIndex);
+                book.SetInteger("Paginas", createCharIndex);
+            }
+        }
+        else
+        {
+            if (charIndex < characters.Count)
+            {
+                useButton.SetActive(false);
+                StartCoroutine(ActiveInputToSelectCharacter());
+                charIndex--;
+                book.SetInteger("Paginas", characters[charIndex].typeChar + 1);
+                nameText.text = characters[charIndex].name;
+            }
+        }
+        StartCoroutine(DisableAnimations());
+
     }
     public void SelectCharacter()
     {
-        book.SetInteger("Page", 0);
+        book.SetInteger("Paginas", 0);
+    }
+
+    public void SelectCharacterButton()
+    {
+        createChar = false;
+        charIndex=0;
+        book.SetInteger("Paginas", characters[charIndex].typeChar + 1);
+        book.SetBool("IsForCreate", false);
+        nameText.text = characters[charIndex].name;
+        nextButton.SetActive(true);
+        prevButton.SetActive(true);
+        GetChartactersFunc(PlayerPrefs.GetString("id_usuario"));
+        StartCoroutine(DisableAnimations());
+        StartCoroutine(ActiveInputToSelectCharacter());
 
     }
     IEnumerator SetText()
@@ -233,8 +242,11 @@ public class ShowCharacters : MonoBehaviour
     IEnumerator CreateCharacter()
     {
         WWWForm form = new WWWForm();
+        newCharacterName = setNameText.text;
+        newCharacterType = (book.GetInteger("Paginas")-1).ToString();
         form.AddField("nombre", newCharacterName);
-        form.AddField("descripcion", newCharacterDescription);
+        form.AddField("type_personaje", newCharacterType);
+        form.AddField("id_usuario", PlayerPrefs.GetString("id_usuario"));
 
 
         using (UnityWebRequest www = UnityWebRequest.Post(_URLC, form))
@@ -259,7 +271,36 @@ public class ShowCharacters : MonoBehaviour
     {
         StartCoroutine(CreateCharacter());
     }
+    public void CreateCharacterButton()
+    {
+        createCharIndex = 1;
+        book.SetBool("IsRight", true);
+        book.SetInteger("Paginas", createCharIndex);
+        book.SetBool("IsForCreate", true);
+        nextButton.SetActive(true);
+        prevButton.SetActive(true);
+        createChar = true;
+        StartCoroutine(DisableAnimations());
+        StartCoroutine(ActivateInputToCreateCharacter());
 
-    
+    }
+    IEnumerator ActiveInputToSelectCharacter()
+    {
+        yield return new WaitForSeconds(0.20f);
+        useButton.SetActive(true);
+    }
+    IEnumerator DisableAnimations()
+    {
+        book.SetBool("Anim", true);
 
+        yield return new WaitForSeconds(0.17f);
+        book.SetBool("Anim", false);
+    }
+    IEnumerator ActivateInputToCreateCharacter()
+    {
+        yield return new WaitForSeconds(0.2f);
+        nameInput.gameObject.SetActive(true);
+        nameInput.ActivateInputField();
+        buttonConfirm.SetActive(true);
+    }
 }
